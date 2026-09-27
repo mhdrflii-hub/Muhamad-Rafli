@@ -1,71 +1,71 @@
-<!DOCTYPE html>
-<html lang="en">
+@extends('layouts.app')
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Profile Mahasiswa</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
-</head>
+@section('content')
 
-<body class="bg-light d-flex flex-column min-vh-100">
-    <nav class="navbar navbar-dark bg-primary shadow-sm mb-4">
-        <div class="container">
-            <a class="navbar-brand" href="{{ route('mahasiswa.profile') }}">Profile Mahasiswa</a>
-        </div>
-    </nav>
+<div class="container py-5">
 
-    <main class="container flex-grow-1">
-        <div class="row justify-content-center">
-            <div class="col-md-6">
-                <div class="card shadow-sm border-0 overflow-hidden">
-                    <div class="card-header bg-white text-center py-4 border-0">
-                        <div class="d-flex justify-content-center mb-3">
-                            <img src="https://iift-e.my.id/storage/about/01X7OSW4A556EE454CH16SP704X.png"
-                                alt="Foto Mahasiswa"
-                                class="rounded-circle border border-3 border-primary"
-                                style="width: 120px; height: 120px; object-fit: cover;">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-7">
+
+            <div class="card shadow-sm border-0">
+
+                {{-- Header Profile --}}
+                <div class="card-body text-center py-4">
+
+                    <img 
+                        src="{{ asset('images/foto-rafli.png') }}" 
+                        alt="Foto Profil"
+                        class="rounded-circle mb-3"
+                        style="width: 120px; height: 120px; object-fit: cover;"
+                    >
+
+                    <h2 class="fw-bold mb-1">
+                        {{ $mahasiswa['nama'] }}
+                    </h2>
+
+                    <span class="badge bg-success">
+                        {{ $mahasiswa['status'] }}
+                    </span>
+
+                </div>
+
+                {{-- Data Mahasiswa --}}
+                <div class="card-body border-top">
+
+                    <div class="row py-3 border-bottom">
+                        <div class="col-sm-4 fw-bold text-muted">
+                            NIM
+                        </div>
+                        <div class="col-sm-8">
+                            {{ $mahasiswa['nim'] }}
                         </div>
                     </div>
-                    <div class="card-body p-0">
-                        <ul class="list-group list-group-flush">
-                            <li class="list-group-item d-flex justify-content-between align-items-center">
-                                <span class="fw-bold text-muted">Nama</span>
-                                <span>{{ $mahasiswa['nama'] }}</span>
-                            </li>
-                            <li class="list-group-item d-flex justify-content-between align-items-center">
-                                <span class="fw-bold text-muted">NIM</span>
-                                <span>{{ $mahasiswa['nim'] }}</span>
-                            </li>
-                            <li class="list-group-item d-flex justify-content-between align-items-center">
-                                <span class="fw-bold text-muted">Email</span>
-                                <span>{{ $mahasiswa['email'] }}</span>
-                            </li>
-                            <li class="list-group-item d-flex justify-content-between align-items-center">
-                                <span class="fw-bold text-muted">Prodi Studi</span>
-                                <span>{{ $mahasiswa['prodi'] }}</span>
-                            </li>
-                            <li class="list-group-item d-flex justify-content-between align-items-center">
-                                <span class="fw-bold text-muted">Kampus</span>
-                                <span>{{ $mahasiswa['kampus'] }}</span>
-                            </li>
-                            <li class="list-group-item d-flex justify-content-between align-items-center">
-                                <span class="fw-bold text-muted">Status</span>
-                                <span class="badge text-bg-success">{{ $mahasiswa['status'] }}</span>
-                            </li>
-                        </ul>
+
+                    <div class="row py-3 border-bottom">
+                        <div class="col-sm-4 fw-bold text-muted">
+                            Email
+                        </div>
+                        <div class="col-sm-8">
+                            {{ $mahasiswa['email'] }}
+                        </div>
                     </div>
+
+                    <div class="row py-3">
+                        <div class="col-sm-4 fw-bold text-muted">
+                            Program Studi
+                        </div>
+                        <div class="col-sm-8">
+                            {{ $mahasiswa['prodi'] }}
+                        </div>
+                    </div>
+
                 </div>
+
             </div>
-        </div>
-    </main>
 
-    <footer class="bg-white border-top py-3 mt-5">
-        <div class="container text-center">
-            <span class="text-muted">&copy; 2024 Profile Mahasiswa UNPAM. All rights reserved.</span>
         </div>
-    </footer>
-</body>
+    </div>
 
-</html>
+</div>
+
+@endsection

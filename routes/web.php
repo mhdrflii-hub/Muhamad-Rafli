@@ -4,8 +4,15 @@ use App\Http\Controllers\MahasiswaController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
-    return view('welcome');
+    return view('page.home');
 });
 
-Route::get('/mahasiswa', [MahasiswaController::class, 'index'])->name('mahasiswa.index');
-Route::get('/profile', [MahasiswaController::class, 'index'])->name('mahasiswa.profile');
+Route::get('/profile', [MahasiswaController::class, 'index']);
+
+Route::get('/project', function () {
+    return view('page.project');
+});
+
+Route::get('/about', function () {
+    return view('page.about');
+});
