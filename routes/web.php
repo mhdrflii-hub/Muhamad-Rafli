@@ -5,7 +5,7 @@ use App\Http\Controllers\ProjectController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
-    return view('page.home');
+    return view('admin.tamplate');
 });
 
 Route::get('/profile', [MahasiswaController::class, 'index']);
@@ -15,4 +15,10 @@ Route::get('/project/{id}', [ProjectController::class, 'show'])->name('project.s
 
 Route::get('/about', function () {
     return view('page.about');
+});
+
+Route::prefix('admin')->name('admin.')->group(function () {
+    Route::get('/', function () {
+        return view('admin.tamplate');
+    })->name('home');
 });
