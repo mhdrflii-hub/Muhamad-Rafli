@@ -1,14 +1,15 @@
 <?php
 
 use App\Http\Controllers\MahasiswaController;
+use App\Http\Controllers\AdminProjectController;
 use App\Http\Controllers\ProjectController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
-    return view('admin.tamplate');
+    return view('page.home');
 });
 
-Route::get('/profile', [MahasiswaController::class, 'index']);
+Route::get('/profile', [App\Http\Controllers\MahasiswaController::class, 'index']);
 
 Route::get('/project', [ProjectController::class, 'index'])->name('project.index');
 Route::get('/project/{id}', [ProjectController::class, 'show'])->name('project.show');
@@ -19,6 +20,8 @@ Route::get('/about', function () {
 
 Route::prefix('admin')->name('admin.')->group(function () {
     Route::get('/', function () {
-        return view('admin.tamplate');
+        return view('admin.home');
     })->name('home');
+
+    Route::resource('project', AdminProjectController::class);
 });
