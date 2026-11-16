@@ -8,6 +8,7 @@ use Database\Seeders\DatabaseSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
 use Tests\TestCase;
 
 class AdminAuthenticationAndProjectsTest extends TestCase
@@ -57,6 +58,103 @@ class AdminAuthenticationAndProjectsTest extends TestCase
 
         $this->get(route('admin.project.index'))
             ->assertRedirect(route('login'));
+    }
+
+    public function test_authenticated_user_can_open_the_project_pdf_export_page(): void
+    {
+        $user = User::factory()->create();
+
+        $this->actingAs($user)
+            ->get(route('admin.project.index'))
+            ->assertOk()
+            ->assertSee(route('admin.project.pdf'))
+            ->assertSee('Cetak PDF');
+    }
+
+    public function test_guest_cannot_export_projects_as_pdf(): void
+    {
+        $this->get(route('admin.project.pdf'))
+            ->assertRedirect(route('login'));
+    }
+
+    public function test_authenticated_user_receives_a_pdf_with_project_data(): void
+    {
+        $user = User::factory()->create();
+        Project::query()->create([
+            'title' => 'Portfolio',
+            'description' => 'A sample project',
+            'teknologi' => 'Laravel',
+            'image' => null,
+            'status' => 'selesai',
+        ]);
+
+        $response = $this->actingAs($user)
+            ->get(route('admin.project.pdf'));
+
+        $response->assertOk()
+            ->assertHeader('content-type', 'application/pdf');
+
+        $this->assertSame('%PDF-', substr($response->getContent(), 0, 5));
+    }
+
+    public function test_pdf_report_displays_project_details(): void
+    {
+        $project = Project::make([
+            'title' => 'Portfolio',
+            'description' => 'A sample project',
+            'teknologi' => 'Laravel',
+            'status' => 'selesai',
+        ]);
+
+        $report = view('admin.projects.pdf', [
+            'projects' => collect([$project]),
+        ])->render();
+
+        $this->assertStringContainsString('Portfolio', $report);
+        $this->assertStringContainsString('A sample project', $report);
+        $this->assertStringContainsString('Laravel', $report);
+        $this->assertStringContainsString('selesai', $report);
+    }
+
+    public function test_replacing_a_project_image_removes_the_previous_file(): void
+    {
+        $user = User::factory()->create();
+        $oldImage = Str::uuid().'.png';
+        $oldImagePath = public_path('images/'.$oldImage);
+        file_put_contents($oldImagePath, 'old image');
+        $project = Project::query()->create([
+            'title' => 'Portfolio',
+            'description' => 'A sample project',
+            'teknologi' => 'Laravel',
+            'image' => $oldImage,
+            'status' => 'selesai',
+        ]);
+        $replacementImagePath = null;
+
+        try {
+            $this->actingAs($user)
+                ->put(route('admin.project.update', $project), [
+                    'title' => 'Portfolio',
+                    'description' => 'A sample project',
+                    'teknologi' => 'Laravel',
+                    'status' => 'selesai',
+                    'image' => UploadedFile::fake()->image('replacement.png'),
+                ])
+                ->assertRedirect(route('admin.project.index'));
+
+            $this->assertFileDoesNotExist($oldImagePath);
+            $project->refresh();
+            $replacementImagePath = public_path('images/'.$project->image);
+
+            $this->assertNotSame($oldImage, $project->image);
+            $this->assertFileExists($replacementImagePath);
+        } finally {
+            foreach ([$oldImagePath, $replacementImagePath] as $imagePath) {
+                if ($imagePath && file_exists($imagePath)) {
+                    unlink($imagePath);
+                }
+            }
+        }
     }
 
     public function test_dashboard_shows_the_authenticated_user_and_success_message(): void

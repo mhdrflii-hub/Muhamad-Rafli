@@ -32,5 +32,6 @@ Route::prefix('admin')->name('admin.')->middleware('auth')->group(function () {
         return view('admin.home');
     })->name('home');
 
+    Route::get('/project/pdf', [AdminProjectController::class, 'exportPdf'])->name('project.pdf');
     Route::resource('project', AdminProjectController::class)->except('show');
 });
